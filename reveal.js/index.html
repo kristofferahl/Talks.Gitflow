@@ -1,0 +1,970 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Git och Gitflow - Bringing order to chaos</title>
+
+		<meta name="author" content="Kristoffer Ahl">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/gitflow.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+		<script>
+			document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+		<div id="logo">
+			<img src="/img/dotnetmentor-logo.png" width="200px" />
+		</div>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section id="intro">
+					<h1>Gitflow</h1>
+					<h3>Bringing order to chaos</h3>
+					<p>
+						<small>Av <a href="http://77dynamite.com">Kristoffer Ahl</a> / <a href="http://twitter.com/kristofferahl">@kristofferahl</a><br /><a href="http://www.dotnetmentor.se">www.dotnetmentor.se</a></small>
+					</p>
+
+					<aside class="notes" data-markdown>
+						- Kristoffer Ahl
+						- Konsult på Dotnet Mentor
+						- Ett litet konsultbolag bestående av 6 personer med fokus på mentorskap
+						- Jag jobbar primärt med webbaserad utveckling (asp.net mvc, web api, angular osv)
+						- Dotnet Mentor är starka på .NET, Javascript & Node
+						- Open source fantast (FluentSecurity, Koshu, Glimpse)
+					</aside>
+				</section>
+
+				<section>
+					<h2>Agenda</h2>
+					<ul>
+						<li>Git</li>
+						<li>Gitflow</li>
+						<li>Länkar</li>
+						<li>Frågor</li>
+					</ul>
+
+					<aside class="notes" data-markdown>
+						- Git
+						- Gitflow
+						- Länkar
+						- Frågor
+					</aside>
+				</section>
+
+				<section>
+					<h2>Git <img src="/img/git-icon.png" /></h2>
+					<h3 class="fragment">"Source control the way it was meant to be"</h3>
+					<p class="fragment">
+						- Linus Torvalds<br />
+						<img src="/img/linus.jpg"><br />
+						<cite><a href="http://www.flickr.com/photos/51035608727@N01/2236111019/in/photolist-4pADUg-4JMGS5-5A8rRc-5PpD5n-5U4D58-5UoNTc-5UoVJK-5Uti6q-5UuiX2-5UuE2B-5Uy18A-5UyEJu-5UyHMf-5UyJ2G-5UTHGv-5UTLvM-5UY5Ub-5ZiAfZ-5ZYAon-6Ky2vw-71BBbk-769Bui-79bfqe-7iXoLv-7n3rVc-7n3rYc-7n7kx5-7n7WGh-7pqJKg-7pqJLz-7puBNq-bALdha-aG1LnD-aG1M7e-aG1MSv-aG1NCk-dthSzg-dthV9k-dti7v7-dti5Zq-dti6mU-dti6JY-dthRk8-dthT6k-dthRNV-dti4eC-dti52E-dthRtv-aRTz5k-8xaX1Q-91QsCQ">Alex Dawson</a> - Flickr - Creative Commons</cite>
+					</p>
+
+					<aside class="notes" data-markdown>
+						- "Source control the way it was meant to be"
+							- Iaf. enligt Linus Torvalds....
+					</aside>
+				</section>
+
+				<section>
+					<h2 class="c2">Git</h2>
+					<p>Git skapades 2005 av Linus Torvalds för att hantera<br />källkoden till Linuxkärnan</p>
+
+					<aside class="notes" data-markdown>
+						- ... som år 2005 skapade Git för att hantera källkoden till Linuxkärnan
+						- Linus ansåg att inget av de alternativ som fanns räckte till vad gäller funktion och prestanda
+						- Vid den tiden hade kodbasen för linuxkärnan växt sig väldigt stor...
+					</aside>
+				</section>
+
+				<section>
+					<h2 class="c3">Mål</h2>
+					<ol>
+						<li class="fragment">Snabbt</li>
+						<li class="fragment">Starkt stöd för icke-linjär utveckling</li>
+						<li class="fragment">Fullt ut distribuerat</li>
+						<li class="fragment">Kunna hantera stora projekt</li>
+					</ol>
+
+					<aside class="notes" data-markdown>
+						- Git skapades med 4 högt prioriterade mål i sikte
+						- Snabbt
+						- Starkt stöd för icke-linjär utveckling
+							- Tusentals paralella brancher
+						- Fullt ut distribuerat
+						- Kunna hantera stora projekt
+							- t.ex. Linux kärnan
+						- Två av dessa mål är av extra stor betydelse, men först ...
+					</aside>
+				</section>
+
+				<section>
+					<section>
+						<h2 class="c4">Git versus ...</h2>
+
+						<aside class="notes" data-markdown>
+							- Hur skiljer sig git egentligen mot andra versionshanteringssystem
+						</aside>
+					</section>
+					<section>
+						<h2>Git är en key/value store</h2>
+						<p class="fragment">Allt i git lagras som olika typer av objekt</p>
+
+						<aside class="notes" data-markdown>
+							- Git är i botten en key/value store
+								- Allt i git lagras som olika typer av objekt
+									- Dessa objekt knyts samman i form av en commit
+								- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h2>Varje commit identifieras med en hash (SHA-1)</h2>
+						<h3>som unikt identifierar den och dess förälder</h3>
+						
+						<ul>
+							<li class="fragment">Commit object</li>
+							<li class="fragment">Tree object</li>
+							<li class="fragment">Blob object</li>
+						</ul>
+
+						<aside class="notes" data-markdown>
+							- Varje commit identifieras med en hash (SHA-1)
+								- som unikt identifierar den och dess förälder
+								- En commit består av:
+									- Commit object = Referens till dess förälder, dess author och commit message, samt referens till ett tree object...
+									- Tree object = Vilka filer (namn och sha)
+									- Blob object = Filens innehåll
+								- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h2>Den stora skillnaden mellan Git och andra VCS ...</h2>
+						<h3 class="fragment">... är det sätt som Git tänker på dess data</h3>
+
+						<aside class="notes" data-markdown>
+							- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h2>Subversion med vänner</h2>
+						<ul>
+							<li class="fragment">Håller en lista med filer och dess ändringarna över tid</li>
+							<li class="fragment">Varje version sparas som en diff i förhållande till den föregående</li>
+						</ul>
+
+						<aside class="notes" data-markdown>
+							- Subversion med vänner
+								- Håller en lista med filer och dess ändringarna över tid
+								- Varje version sparas som en diff i förhållande till den föregående
+									- För att kunna gå framåt eller bakåt i historiken måste ändringar appliceras eller tas bort
+							- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h2>Git</h2>
+						<ul>
+							<li class="fragment">Gör snapshots av hela repositoryn</li>
+							<li class="fragment">Om en fil inte ändrats, används istället en referens till den senast kända versionen</li>
+						</ul>
+
+						<aside class="notes" data-markdown>
+							- Git gör en snapshots av hela repositoryn
+								- Snapshots, är ungefär som "save points" i ett konsoll-spel
+							- Om en fil inte ändrats i en commit/snapshot används istället en referens till den senast kända versionen
+								- Hela filen lagras (inte skillnaden)
+								- Git kan därför väldigt snabbt hoppa framåt och bakåt i historiken eftersom ...
+								- ... allt git behöver göra är hämta ut den senast kända versionen av en fil vid just det tillfället
+							
+							- Tillbaka till målen (distribuerat, icke-linjär utveckling)
+							- ... PIL HÖGER
+						</aside>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2 class="c1">Git &#9829; Distribuerat = Sant</h2>
+
+						<aside class="notes" data-markdown>
+							- Distribuerat
+								- Git är ett distribuerat versionshanteringssystem
+								- Vilket innebär att ...
+								- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h3>Decentralized VCS</h3>
+						<p><img src="/img/decentralized.png" width="500px" /></p>
+						<p>Har inget centralt arkiv (repository)</p>
+
+						<aside class="notes" data-markdown>
+							- Inget centralt arkiv/repository finns
+								- Ingen repository är viktigare än den andra
+								- Alla kan hämta och dela ändringar direkt med varandra
+								- Till skillnad från ...
+								- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h3>Centralized VCS</h3>
+						<p><img src="/img/centralized.png" width="500px" /></p>
+						<p>Har ett centralt arkiv (repository)</p>
+
+						<aside class="notes" data-markdown>
+							- ... ett Centralized VCS där man hämtar och delar ändringar via en central repository
+							- Detta är givetvis en förenklad beskrivning av skillnaderna
+								- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h3>Decentralized VCS + Centralized</h3>
+						<p><img src="/img/centralized-decentralized.png" width="500px" /></p>
+
+						<aside class="notes" data-markdown>
+							- I git kan vissa repositories anses vara viktigare än andra
+								- T.ex. det repository där du publicerar din öppna källkod för allmänheten
+								- T.ex. där den officiella Linuxversionen publiceras
+								- Detta är inte av tekniska skäl utan detta är en rent social konvention
+							- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h3>Varje utcheckning är en fullständig kopia</h3>
+						<pre><code class="bash">git clone https://github.com/kristofferahl/FluentSecurity.git</code></pre>
+
+						<aside class="notes" data-markdown>
+							- Varje utcheckning av en repository är en fullständig kopia
+								- Alla filer och historik sedan tidernas begynnelse hämtas ut
+								- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h3>Offline</h3>
+						<p>
+							<img src="/img/hell-yeah.jpg" /><br />
+							<cite><a href="http://www.flickr.com/photos/dr_e_g/4457491279/in/photolist-7MTNRV-dCifx1-9EpRRT-7QDvfr-ahCGB9-8EpBK9-8EpBdE-8EmsCV-8EmsoX-8EpAUy-8EpC4o-8EmsjX-8EmsUD-8EpBTJ-8Emsog-8EmsnD-8EmrL6-8EmrLP-8EmrJa-8EpAVh-8EmsTi-8EmrKc-8EpBR3-8EpBtA-8EmsSa-8EmsvV-8Ems3T-8EpBeb-8Emsh8-8EpBpy-8Ems5r-8EmrQc-8EpByQ-8Ems9x-8EpBJh-8EmrY4-8EpBVb-8Ems2t-8EpB3U-8EmsVZ-8EmsqX-8EmsPt-8EpBRY-8EpB9G-8EpB1C-8EmsQK-8Ems8x-cv1eGd-acEkZv-acHcBG-acEpUB/">Dr EG</a> - Flickr - Creative Commons</cite>
+						</p>
+
+						<aside class="notes" data-markdown>
+							- Offline
+								- Koda
+								- Skapa commits
+								- Göra diff-operationer
+								- Titta på loggar
+								- etc...
+								- ... PIL HÖGER
+						</aside>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2 class="c2">Git &#9829; Branching = Sant</h2>
+<pre><code class="bash">git checkout -b feature/create-invoice
+
+git branch
+  develop
+* feature/create-invoice
+  master</code></pre>
+
+						<aside class="notes" data-markdown>
+							- Brancher har ni säkert alla hört talas om
+							- Hur mycket beror troligtvis på hur enkelt det är att skapa och merga dom i ert VCS
+							- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h2>Branching är ett kärnkoncept i Git</h2>
+						<h3>Inte ett sidospår!</h3>
+
+						<aside class="notes" data-markdown>
+							- Branching är ett kärnkoncept i Git, inte ett sidospår
+								- Detta gör att de är väldigt enkla att skapa, uppdatera, föra samman och ta bort
+								- Vidare medför det att brancher faktiskt används av de flesta som jobbar med git
+								- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h2>En branch är en "label" som pekar på en commit</h2>
+
+						<aside class="notes" data-markdown>
+							- En branch i git är en "label" som pekar på en commit
+								- Detta är väldigt fint när man har en stor kodbas
+								- I många andra VCS är varje branch en komplett kopia av hela kodbasen och att slå samman brancher är klurigt
+									- Att skapa och merga en branch anses ofta vara en "dyr" och "farlig" operation vilket leder till att brancher sällan används
+								- Eftersom en branch i git bara är en label som pekar på en commit är det väldigt enkelt att återskapa en branch som du råkat ta bort
+								- ... PIL HÖGER
+						</aside>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2 class="c3">Chaos</h2>
+						<p>
+							<img src="/img/order-chaos.jpg"><br />
+							<cite><a href="http://www.flickr.com/photos/36169570@N08/10248755515/in/photolist-gBDxXi-ajhWJe-ajhWLK-ajkK6L-dCgNQr-dRhRHd-82vFxM-bpK4mG-hvAtZv-hvAufk-dymV9a-e26px3-e2LKRS-fqY8Au-8E9q6Y-atUMFc-dsxjNh-detqAJ-e6FkMH-e6M1b7-dbGjpL-emZmnC-emZm7d-7FxPMi-dsxa3v-ejocXq-f56p98-cjKLMW-e26oSE-dQ9gKB-d8vG9f-axceMF-e8SSQm-e8MeTv-e8MeSH-e8MePX-e8ST6u-e8MeTZ-e8SSRU-e8ST2L-e8MeWH-e8SSTj-e8ST3o-e8SSVd-e8MeLx-e8SSNN-e8MeJ4-e8SSR5-e8SSXL-e8MeXt-e8SSTN">Sebastien Wiertz</a> - Flickr - Creative Commons</cite>
+						</p>
+
+						<aside class="notes" data-markdown>
+							- The magic powers of git
+							- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h2>Distribuerat</h2>
+						<p>
+							<img src="/img/distributed.jpg" width="500px" /><br />
+							<cite><a href="http://www.flickr.com/photos/27734462@N00/4456842344/in/photolist-7MQtXo-7MQqz3-7MLx2Z-7MQF43-7MQJts-7MQRoy-7MLLNZ-bEcviM-7N8qGC-8Jrn55-8Y2Z5D-bLmUnF-8Y2Yoz-8hHLoX-8rnbmC-8ZzoYK-9rehox-dD7WZu-8pk1MV-c2qLWm-e6P1yv-8pk1sV-eZt3KJ-7AzcXg-dBLvb1-dPuA7E-8pk2dn-ap6Aj6-ap6zs6-ap9kaN-ap6A7B-ap6zvp-ap9jDf-ap9jzC-9rehHV-ap9jQf-ap9jvL-ap9jp9-ap6zTp-ap6zXx-ap6Abi-ap9jbq-ap6Afa-ap6zDD-7Y3URy-9evtKf-bkNYWg-aY2yH4-ejVivp-9SqBBf-9SqBgs">franckcuny</a> - Flickr - Creative Commons</cite>
+						</p>
+
+						<aside class="notes" data-markdown>
+							- Distribuerat
+								- Eftersom alla utvecklare har sin egen kopia av en repository kan problem uppstå när en utvecklare inte synkat sitt arkiv på länge
+									- Utvecklaren måste själv synka sitt arkiv med övriga utvecklare i sitt team
+									- Men vem utav utvecklarna ska jag synka med?
+									- Och som om inte det vore nog, med vilken branch ska jag synka?
+									- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h2>Branching</h2>
+						<p>
+							<img src="/img/branching.jpg" width="500px" /><br />
+							<cite><a href="http://www.flickr.com/photos/nevilzaveri/4273424260/">Nevil Zaveri</a> - Flickr - Creative Commons</cite>
+						</p>
+
+						<aside class="notes" data-markdown>
+							- Branching
+								- Eftersom det är så lätt att skapa brancher i Git blir det ofta många brancher att hålla reda på
+									- I viken branch ligger koden som gör X?
+									- Är min kopia av branchen up to date?
+									- Är min branch up to date i förhållande till huvudbranchen (master/trunk)?
+									- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h2>Historiken</h2>
+						<p><img src="/img/history.jpg" width="500px" /></p>
+
+						<aside class="notes" data-markdown>
+							- Historiken
+								- Historiken i Git kan ändras!
+									- Git ger dig möjlighet att ändra historik i en branch
+										- `git rebase`
+										- `git commit --amend`
+										- `git revert`
+											- Göra om en commit, ta bort commits, ändra ordningen på commits
+										- Detta kan låta läskigt men är en av de stora styrkorna med Git
+											- Git låter mig som gör mycket misstag när jag kodar, framstå som en ninja coder
+											- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h2>"With great power, comes great responsibility"</h2>
+						<p>
+							<img src="/img/spiderman.jpg" width="500px" /><br />
+							<cite><a href="http://www.flickr.com/photos/58067336@N00/483151544/in/photolist-JGh83-Ksvej-MV2Eu-MV6ab-MVbmu-MWGMB-N34BQ-NvbY1-NwL9m-2d4ymn-2wJZ8y-32mmpr-3aQkhG-3qi6R6-3tjX9d-3LhCZT-3LhDjM-3LhDEz-3LhM7g-3Ln7Rs-3U8hJU-48s1QG-48LVtx-4b5bKa-4dMz1C-4fCuxV-4fGtQ1-4iTDt4-4t9erd-4xTFEz-4BSNoW-4Mf3mn-4Tkw9d-55KGBt-56Y5oc-57gjGM-57itrQ-59b9VB-59Cm1k-59G2uW-5aS74c-5bvNQK-5duHBK-5jzGnw-5kjYDT-5kpfRN-5mChzv-5pEUW1-5qvMF8-5zA3uB-5EyVc2">Martha Silva</a> - Flickr - Creative Commons</cite>
+						</p>
+
+						<aside class="notes" data-markdown>
+							- "With great power, comes great responsibility"
+							- ... PIL HÖGER
+						</aside>
+					</section>
+				</section>
+
+				<section>
+					<h2 class="c4">Tänk om...</h2>
+					<p>
+						<img src="/img/think.jpg" width="500px" /><br />
+						<cite><a href="http://www.flickr.com/photos/47854931@N00/3205277810/in/photolist-5TeTqw-5U2UAm-5UHygy-5YerwC-66jCMz-66FnDz-6fno9Y-6gcKYX-6indxk-6itRpW-6jUSaY-6qip9K-6sNcDf-6uGuTe-6FuNT5-6KA5hY-6L3WVV-6NS9xY-6PWUha-6XmnVE-739RHg-78YbWf-7kvy63-8YV4K5-gJka8c-dS7kwj-8WJiEP-bCLegy-8bfUxv-88PM4K-81NhcP-fiDzZh-bfYcYP-aeKu3K-7VMvxK-7UwfdK-bynFt6-anEb6v-aXVAzk-8UEWTg-8UEWUz-bzsLZL-daiUvz-daiV97-aUTi5z-bjVZWb-8s8Aeh-dQndac-brMt9d-cwZX2y-atgskP">Jacob Bøtter</a> - Flickr - Creative Commons</cite>
+					</p>
+
+					<aside class="notes" data-markdown>
+						- Vi kunde använda hela kraften hos git utan att skjuta oss själva i foten
+						- Det fanns ett arbetsflöde som gav oss struktur i vårt arbete med brancher och olika repositories
+						- Man kunde arbeta med flera brancher paralellt utan att behöva oroa mig för stora konflikter vid merge
+						- Man kunde förbereda en release i lugn och ro, helt isolerat från pågående utveckling
+						- Det fanns ett enkelt sätt att hantera buggar utan att stoppa upp utvecklingen av nya features
+						- Man kunde utläsa mening i de brancher som finns och förenkla continous integration och deployment
+						- ... PIL HÖGER
+					</aside>
+				</section>
+
+				<section>
+					<section>
+						<h2>Gitflow</h2>
+						<h3>Bringing order to chaos</h3>
+						<p>
+							<img src="/img/gitflow-twisted.png" /><br />
+							<cite><a href="http://nvie.com/posts/a-successful-git-branching-model/">Vincent Driessen</a> - Nvie.com</cite>
+						</p>
+
+						<aside class="notes" data-markdown>
+							- Det är här som Gitflow kommer in i bilden...
+							- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h2>"A successful Git branching model"</h2>
+						<h3>av Vincent Driessen</h3>
+						<p>
+							<img src="/img/vincent.jpg" /><br />
+							<cite><a href="http://nvie.com/posts/a-successful-git-branching-model/">Vincent Driessen</a> - Nvie.com</cite>
+						</p>
+
+						<aside class="notes" data-markdown>
+							- I januari 2010 publicerades "A successful Git branching model" av Vincent Driessen
+								- Beskrev en branching och merging strategi för git
+								- Bloggposten fick snabbt uppmärksamhet och branching modellen är idag en av de vanligaste
+								- Knappt en månad senare föddes Gitflow i form av ...
+								- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h2>Gitflow</h2>
+						<h3>En uppsättning hög-nivå extensions över git</h3>
+
+						<aside class="notes" data-markdown>
+							- Gitflow är en uppsättning hög-nivå extensions över git
+								- En uppsättning hög-nivå extensions över git som hjälper dig utföra dom uppgifter som beskrivs i Vincents bloggpost
+								- Gitflow är bara ett hjälpmedel, inte ett krav...
+								- Allt som Gitflow gör kan du göra direkt i git
+								- Teorin bakom Gitflow kan appliceras även i andra DVCS
+								- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h2>Gitflow är med andra ord</h2>
+						<ul>
+							<li class="fragment">En strategi/modell för branching och merging i git</li>
+							<li class="fragment">Extensions för git</li>
+						</ul>
+
+						<aside class="notes" data-markdown>
+							- Gitflow är med andra ord
+								- En strategi/modell för branching och merging i git
+								- Extensions för git
+						</aside>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2 class="c1">Vad Gitflow ger dig</h2>
+						<ul>
+							<li class="fragment">Stöd för paralell utveckling</li>
+							<li class="fragment">Struktur för samarbete</li>
+							<li class="fragment">Release staging</li>
+							<li class="fragment">Hotfixes</li>
+						</ul>
+
+						<aside class="notes" data-markdown>
+							- Vad Gitflow ger dig
+								- Stöd för paralell utveckling
+									- Möjliggör paralell utveckling (sjösättning av ny version, kodande av nya features och buggfixar)
+								- Struktur för samarbete
+									- Ett strukturerat sätt för ditt team samarbeta
+								- Release staging
+									- Möjligheten att jobba med och förbereda en release isolerat från pågående utveckling
+								- Hotfixes
+									- Ett smart sätt att hantera buggar i produktion
+									- ... PIL HÖGER
+						</aside>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2 class="c2">The gist of Gitflow</h2>
+						<p>
+							<img src="/img/gitflow-cut.png" /><br />
+							<cite><a href="http://nvie.com/posts/a-successful-git-branching-model/">Vincent Driessen</a> - Nvie.com</cite>
+						</p>
+
+						<aside class="notes" data-markdown>
+							- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h2>Använder en "Truth" repository</h2>
+						<p class="fragment">som framöver kommer kallas för "origin"</p>
+						<p>
+							<img src="/img/gitflow-centralized-decentralized.png" width="400px" /><br />
+							<cite><a href="http://nvie.com/posts/a-successful-git-branching-model/">Vincent Driessen</a> - Nvie.com</cite>
+						</p>
+						<div class="fragment">
+							<pre><code class="bash">git pull origin some-branch</code></pre>
+						</div>
+						<div class="fragment">
+							<pre><code class="bash">git push origin some-branch</code></pre>
+						</div>
+
+						<aside class="notes" data-markdown>
+							- Modellen använder en så kallad "truth repo" (origin)
+								- som framöver kommer kallas för "origin"
+								- Origin är en så kallad remote och symboliserar en kopia av en repository
+									- Kopian kan finnas hos dig eller hos någon annan. Ex. en annan utvecklare eller på github.com
+								- Alla utvecklare hämtar (pull) och skickar (push) sina ändringar via origin
+									- `git pull origin <brach>` och `git push origin <branch>`
+								- Utvecklarna kan fortfarande dela ändringar direkt med varandra genom att skapa en remote för respektive team-medlem
+								- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h2>Två typer av brancher</h2>
+						<ul>
+							<li class="fragment">Main branches (Långlivade)</li>
+							<li class="fragment">Supporting branches (Kortlivade)</li>
+						</ul>
+
+						<aside class="notes" data-markdown>
+							- Bygger på två typer av brancher
+								- Main branches (Långlivade)
+								- Supporting branches (Kortlivade)
+								- Varje branchtyp har semantiska namn och följer en enkel naming convention
+								- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h2>Main branches (Långlivade)</h2>
+						<ul>
+							<li class="fragment">
+								<h4>master</h4>
+								<p>The production code base. No code changes are ever made directly to this branch.</p>
+							</li>
+							<li class="fragment">
+								<h4>develop</h4>
+								<p>Code ready for production. Commits are allowed but they should be very small and focused. It must be ready for release to production.</p>
+							</li>
+						</ul>
+
+						<aside class="notes" data-markdown>
+							- Main branches (Långlivade)
+								- Den centrala repositoryn (origin) har två huvudbrancher med en oändlig livslängd:
+								- **master** = The production code base. No code changes are ever made directly to this branch.
+								- Parallellt med master finns en annan gren som kallas develop
+								- **develop** = Code ready for production. Commits are allowed but they should be very small and focused. It must be ready for release to production.
+								- Develop kan ses som en “integration branch” eftersom det är här alla nya features integreras
+								- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h2>Supporting branches (Kortlivade)</h2>
+						<ul>
+							<li class="fragment">
+								<h4>feature</h4>
+								<p>Active code development. Usually related to a ticket or workitem. This is where you do most of your development.</p>
+							</li>
+							<li class="fragment">
+								<h4>release</h4>
+								<p>Temporary integration branch. Do QA and make the code ready for deployment. Bumping version numbers.</p>
+							</li>
+							<li class="fragment">
+								<h4>hotfix</h4>
+								<p>Temporary integration branch for production bug fixes.</p>
+							</li>
+						</ul>
+
+						<aside class="notes" data-markdown>
+							- Supporting branches (Kortlivade)
+								- **feature** = Active code development. Usually related to a ticket or workitem. This is where you do most of your development.
+								- **release** = Temporary integration branch. Do QA and make the code ready for deployment. Bumping version numbers.
+								- **hotfix** = Temporary integration branch for production bug fixes.
+								- Om vi följer detta kommer vi få ett commit-träd i origin som kan ut såhär
+								- ... PIL HÖGER
+						</aside>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h2 class="c3">Gitflow awesome-sauce</h2>
+						<p>
+							<img src="/img/gitflow.png" /><br />
+							<cite><a href="http://nvie.com/posts/a-successful-git-branching-model/">Vincent Driessen</a> - Nvie.com</cite>
+						</p>
+						
+						<aside class="notes" data-markdown>
+							- Bild: Översiktsbild gitflow
+							- Om vi följer detta kommer vi få ett commit-träd i origin som kan ut såhär
+							- Kom ihåg att alla utvecklare har en fullständig kopia av detta
+							- Kan upplevas onödigt krångligt men fördelarna är många
+							- Nu ska vi titta på varje del och skriva lite gitflow kommandon i bash
+							- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h2>Installera gitflow</h2>
+						<ul>
+							<li>
+								<h4>Windows</h4>
+								<p><a href="https://github.com/nvie/gitflow/wiki/Windows">https://github.com/nvie/gitflow/wiki/Windows</a></p>
+							</li>
+							<li>
+								<h4>Linux</h4>
+								<p><a href="https://github.com/nvie/gitflow/wiki/Linux">https://github.com/nvie/gitflow/wiki/Linux</a></p>
+							</li>
+							<li>
+								<h4>Mac-OSX</h4>
+								<p><a href="https://github.com/nvie/gitflow/wiki/Mac-OS-X">https://github.com/nvie/gitflow/wiki/Mac-OS-X</a></p>
+							</li>
+						</ul>
+
+						<aside class="notes" data-markdown>
+							- Installera gitflow
+								- Windows : https://github.com/nvie/gitflow/wiki/Windows
+								- Linux : https://github.com/nvie/gitflow/wiki/Linux
+								- Mac-OSX : https://github.com/nvie/gitflow/wiki/Mac-OS-X
+								- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h2>git flow init</h2>
+						<p><img src="/img/git-flow-init.png" /></p>
+
+						<div class="fragment">
+							<pre><code class="bash">git flow init</code></pre>
+							Sätter upp en befintlig eller ny repository
+						</div>
+
+						<aside class="notes" data-markdown>
+							- Med `git flow init` sätter vi upp en repository för att använda gitflow
+							- Vi kan göra det på en ny eller befintlig repository
+							- `-d` talar om att vi vill acceptera dom rekommenderade branch-konventionerna
+							- Resultatet blir en `master` och en `develop` branch
+							- ... PIL HÖGER
+						</aside>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2 class="c4">Master & Develop</h2>
+						<ul>
+							<li class="fragment">Varje commit i master representerar en release</li>
+							<li class="fragment">En commit görs bara i master vid release</li>
+							<li class="fragment">Develop är den branch som representerar nästa release</li>
+							<li class="fragment">Develop ska alltid vara redo för release utan förvarning</li>
+						</ul>
+
+						<aside class="notes" data-markdown>
+							- Varje commit i master representerar en release
+								- Anledningen till att vi nu är i develop är att vi aldrig får jobba direkt i master
+								- Varje commit i master representerar en release
+							- Det enda tillfället en commit görs i master är i samband med en release
+								- Detta är viktigt! Vi kan då enkelt koppla samman git med Teamcity och Octopus Deploy
+								- Per definition blir varje commit en ny release till production
+							- Develop är den branch som representerar nästa release
+								- När källkoden i develop är stabil och redo för en ny release ska koden slås ihop med master och taggas
+								- Koden i develop ska alltid vara redo för release utan förvarning
+							- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h2>Master & Develop</h2>
+						<p>
+							<img src="/img/gitflow-master-develop.png" /><br />
+							<cite><a href="http://nvie.com/posts/a-successful-git-branching-model/">Vincent Driessen</a> - Nvie.com</cite>
+						</p>
+
+						<aside class="notes" data-markdown>
+							- Varje commit i master representerar en release
+								- Anledningen till att vi nu är i develop är att vi aldrig får jobba direkt i master
+								- Varje commit i master representerar en release
+							- Det enda tillfället en commit görs i master är i samband med en release
+								- Detta är viktigt! Vi kan då enkelt koppla samman git med Teamcity och Octopus Deploy
+								- Per definition blir varje commit en ny release till production
+							- Develop är den branch som representerar nästa release
+								- När källkoden i develop är stabil och redo för en ny release ska koden slås ihop med master och taggas
+								- Koden i develop ska alltid vara redo för release utan förvarning
+							- ... PIL NER
+						</aside>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2 class="c1">Feature</h2>
+						<ul>
+							<li class="fragment">Prefixas med <code>feature/</code></li>
+							<li class="fragment">Utgår alltid från <code>develop</code></li>
+							<li class="fragment">Slås alltid ihop med <code>develop</code></li>
+						</ul>
+						<div class="fragment">
+<pre><code class="bash">git checkout -b feature/my-new-feature develop</code></pre>
+<pre><code class="bash">git checkout develop
+git merge --no-ff feature/my-new-feature
+git branch -d feature/my-new-feature
+git push origin develop</code></pre>
+						</div>
+
+						<aside class="notes" data-markdown>
+							- Prefixas med feature/
+							- Utgår alltid från develop
+							- Slås alltid ihop med develop
+							- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h2>git merge --no-ff</h2>
+						<p>
+							<img src="/img/gitflow-no-ff.png" /><br />
+							<cite><a href="http://nvie.com/posts/a-successful-git-branching-model/">Vincent Driessen</a> - Nvie.com</cite>
+						</p>
+
+						<aside class="notes" data-markdown>
+							- No fast forward (--no-ff) tvingar git att skapa en merge-commit
+							- Denna commit fungerar som en markör och gör att ditt commit tree behåller kännedom om vilken branch dina commits gjorts i
+							- Om du inte anger --no-ff gör git en "fast forward" (om den kan) och resulterar i att ditt commit tree plattas ut
+							- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h2>Feature</h2>
+						<p>
+							<img src="/img/gitflow-feature.png" /><br />
+							<cite><a href="http://nvie.com/posts/a-successful-git-branching-model/">Vincent Driessen</a> - Nvie.com</cite>
+						</p>
+
+						<aside class="notes" data-markdown>
+							- Eftersom koden i develop alltid ska vara redo för release behöver vi använda oss av feature-branches när vi utvecklar nya features för en kommande release
+							- Gitflow tar tillvara på git's styrka med att skapa och merga brancher
+							- Därför används feature branches väldigt flitigt i gitflow
+							- En feature branch ger dig möjlighet att jobba isolerat på en feature
+							- Om alla jobbar mot samma branch händer det lätt att man trampar varandra på tårna
+							- En feature branch kan delas med andra via origin eller direkt mellan utvecklare
+							- Det viktiga är att när en feature är färdig, ska den slås ihop med develop och synkas med origin
+							- `--no-ff` används för att tvinga git att skapa en merge-commit i develop
+							- På så sätt undviker vi att förlorar informationen om att branchen har existerat
+							- En feature branch är kortlivad och lever vanligvis allt från 1 timmar till ett par dagar
+							- När en feature branch slagits ihop med develop tas den bort
+							- Feature branches hjälper dig identifiera det arbete som är pågående
+							- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h2>Features med gitflow</h2>
+<pre><code class="bash">git flow feature
+git flow feature start &lt;name>
+git flow feature finish &lt;name>
+git flow feature publish &lt;name>
+git flow feature pull &lt;remote> &lt;name>
+</code></pre>
+
+						<aside class="notes" data-markdown>
+							- ... PIL HÖGER
+						</aside>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2 class="c2">Release</h2>
+						<ul>
+							<li class="fragment">Prefixas med <code>release/</code></li>
+							<li class="fragment">Utgår alltid från <code>develop</code></li>
+							<li class="fragment">Slås alltid ihop med <code>master</code> och <code>develop</code></li>
+						</ul>
+						<div class="fragment">
+<pre><code class="bash">git checkout -b release/3.1 develop
+git commit -a -m "Bumped version number to 3.1"</code></pre>
+<pre><code class="bash">git checkout master
+git merge --no-ff release/3.1
+git tag -a 3.1
+git checkout develop
+git merge --no-ff release/3.1
+git branch -d release/3.1
+git push origin --all
+git push origin --tags</code></pre>
+						</div>
+
+						<aside class="notes" data-markdown>
+							- Prefixas med release/
+							- Utgår alltid från develop
+							- Slås alltid ihop med master och develop
+							- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h2>Release</h2>
+						<p>
+							<img src="/img/gitflow-release.png" /><br />
+							<cite><a href="http://nvie.com/posts/a-successful-git-branching-model/">Vincent Driessen</a> - Nvie.com</cite>
+						</p>
+
+						<aside class="notes" data-markdown>
+							- Används för förberedelser av en release
+							- Den prefixas alltid med release/
+							- Release-brancher baseras alltid på develop
+							- Och mergas alltid med både master och develop
+							- En release bör taggas för framtiden
+							- I en release-branch gör du sista-minuten ändringar, fixar små-buggar och bumpar versionsnumret
+							- Stora, nya features får inte skapas här
+							- Genom att använda en release branch kan utveckling fortgå i develop
+							- En release branch skapas när develop reflekterar det du vill ska ingå i nästa release
+							- Alla features som ska ingå i releasen måste vara mergade med develop
+							- Features som inte ska vara del av releasen får inte vara mergade med develop
+							- Vid start av en release-branch ger du releasen sitt versionsnummer, inte innan
+							- Synkas alltid med origin/develop och origin/master
+							- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h2>Releases med gitflow</h2>
+<pre><code class="bash">git flow release
+git flow release start &lt;release>
+git flow release finish &lt;release>
+</code></pre>
+
+						<aside class="notes" data-markdown>
+							- ... PIL HÖGER
+						</aside>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h2 class="c3">Hotfix</h2>
+						<ul>
+							<li class="fragment">Prefixas med <code>hotfix/</code></li>
+							<li class="fragment">Utgår alltid från <code>master</code></li>
+							<li class="fragment">Slås alltid ihop med <code>master</code> och <code>develop|release</code></li>
+						</ul>
+						<div class="fragment">
+<pre><code class="bash">git checkout -b hotfix/3.1.1 master
+git commit -a -m "Bumped version number to 3.1.1"</code></pre>
+<pre><code class="bash">git checkout master
+git merge --no-ff hotfix/3.1.1
+git tag -a 3.1
+git checkout develop
+git merge --no-ff hotfix/3.1.1
+git branch -d hotfix/3.1.1
+git push origin --all
+git push origin --tags</code></pre>
+						</div>
+
+						<aside class="notes" data-markdown>
+							- Prefixas med hotfix/
+							- Utgår alltid från master
+							- Slås alltid ihop med master och develop|release
+							- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h2>Hotfix</h2>
+						<p>
+							<img src="/img/gitflow-hotfix.png" /><br />
+							<cite><a href="http://nvie.com/posts/a-successful-git-branching-model/">Vincent Driessen</a> - Nvie.com</cite>
+						</p>
+
+						<aside class="notes" data-markdown>
+							- En hotfix-branch har ungefär samma egenskaper som en release-branch
+							- Den utgår dock från master men mergas alltid ihop med master och develop
+							- Om en release-branch finns, ska hotfixen mergas in i den istället för develop
+							- Hotfix-branches används för att rätta buggar och göra oplanerade småfixar
+							- Dom används bara när det inte finns tid att vänta på nästa "riktiga" release
+							- När behovet uppstår, skapas en hotfix-branch baserat på den version i production som buggen finns i
+							- Hotfix-branches gör att arbete kan fortlöpa ohindrat i övriga brancher
+							- ... PIL NER
+						</aside>
+					</section>
+					<section>
+						<h2>Hotfixes med gitflow</h2>
+<pre><code class="bash">git flow hotfix
+git flow hotfix start &lt;release>
+git flow hotfix finish &lt;release>
+</code></pre>
+
+						<aside class="notes" data-markdown>
+							- ... PIL HÖGER
+						</aside>
+					</section>
+				</section>
+
+				<section>
+					<h2 class="c4">Summering</h2>
+					<p>
+						<img src="/img/gitflow.png" /><br />
+						<cite><a href="http://nvie.com/posts/a-successful-git-branching-model/">Vincent Driessen</a> - Nvie.com</cite>
+					</p>
+
+					<aside class="notes" data-markdown>
+						- Gitflow tillför inte en massa magi till ditt projekt men resultatet av användandet gör
+						- Du får en elegant mental modell för hur du och ditt team ska arbeta
+						- Du får en git historik som faktiskt går att läsa och förstå
+						- Dessutom kan du använda semantiken i brancherna för att spåra olika typer av brancher i ex. Teamcity för att starta olika typer av builds och deploys						
+						- ... PIL HÖGER
+					</aside>
+				</section>
+
+				<section data-markdown>
+					## Länkar
+
+					- [http://nvie.com/posts/a-successful-git-branching-model/](http://nvie.com/posts/a-successful-git-branching-model/)
+					- [https://github.com/nvie/gitflow](https://github.com/nvie/gitflow)
+					- [http://try.github.com](http://try.github.com)
+					- [http://tom.preston-werner.com/2009/05/19/the-git-parable.html](http://tom.preston-werner.com/2009/05/19/the-git-parable.html)
+				</section>
+
+				<section>
+					<h1>THE END</h1>
+					<h2>Frågor på det?</h2>
+					<p>
+						<small><a href="http://77dynamite.com">Kristoffer Ahl</a> / <a href="http://twitter.com/kristofferahl">@kristofferahl</a><br /><a href="http://www.dotnetmentor.se">www.dotnetmentor.se</a></small>
+					</p>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
